@@ -1,6 +1,6 @@
 import { FamilyRepo } from "./FamilyRepo";
 
-export class FamiliService {
+export class FamilyService {
   constructor(private readonly repo: FamilyRepo) {}
 
   async pokemonFamilies(id: number) {
