@@ -1,14 +1,13 @@
-import { Router } from 'express'
+import { Router } from "express";
 
-const InfoRouter = Router()
+const InfoRouter = Router();
 
-InfoRouter.get('/info/:id', (httpRequest, httpResponse) => {
-  const pokemonId = parseInt(httpRequest.params.id)
+InfoRouter.get("/info/:id", async (httpRequest, httpResponse) => {
+  const pokemonId = parseInt(httpRequest.params.id);
 
-  httpResponse.send({ success: true, pokemonId })
-})
+  httpResponse.send({ success: true, pokemonId });
+});
 
+InfoRouter.get("*", (_, res) => res.status(404).send("Not found"));
 
-InfoRouter.get('*', (_, res) => res.status(404).send('Not found'))
-
-export default InfoRouter
+export default InfoRouter;
