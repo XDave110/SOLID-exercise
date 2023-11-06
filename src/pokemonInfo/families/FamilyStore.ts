@@ -1,6 +1,8 @@
-import { buildQueryString, runQuery } from "../db";
-import { FamiliesDBDTO } from "../pokemonInfo/dtos/FamiliesDBDTO";
-import { FamilyRepo } from "./family.repo";
+
+import { buildQueryString, runQuery } from "../../db";
+import { FamiliesDBDTO } from "../dtos/FamiliesDBDTO";
+
+import { FamilyRepo } from "./FamilyRepo";
 
 export class FamilyStore implements FamilyRepo {
   async GetPokemonFamilies(id_pokemon: number): Promise<FamiliesDBDTO[]> {

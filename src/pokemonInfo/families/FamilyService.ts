@@ -1,4 +1,4 @@
-import { FamilyRepo } from "./family.repo";
+import { FamilyRepo } from "./FamilyRepo";
 
 export class FamiliService {
   constructor(private readonly repo: FamilyRepo) {}

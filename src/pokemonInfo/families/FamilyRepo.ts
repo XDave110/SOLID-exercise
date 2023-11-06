@@ -1,4 +1,4 @@
-import { FamiliesDBDTO } from "../pokemonInfo/dtos/FamiliesDBDTO";
+import { FamiliesDBDTO } from "../dtos/FamiliesDBDTO";
 
 export interface FamilyRepo {
   GetPokemonFamilies(id_pokemon: number): Promise<FamiliesDBDTO[]>;
