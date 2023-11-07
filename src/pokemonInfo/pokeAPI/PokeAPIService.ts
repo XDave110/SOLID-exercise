@@ -49,13 +49,12 @@ export class PokeAPIService {
     return -1
   }
 
-  private async pokemonMoveMapping(responseMoves: any): Promise<any> {
+  private async pokemonMoveMapping(responseMoves: [{ move: { name: string }, version_group_details: [{ level_learned_at: number }] }]): Promise<Move[]> {
     const topPokemonsLevelBased = responseMoves
-      .map((iteratedMove: { move: { name: string }, version_group_details: any[] }) => {
-        const highestLevel = Math.max(...iteratedMove.version_group_details.map((detail) => detail.level_learned_at))
-        return { name: iteratedMove.move.name, level: highestLevel }
+      .map((individualMove: { move: { name: string }, version_group_details: [{ level_learned_at: number }] }) => {
+        const highestLevel = Math.max(...individualMove.version_group_details.map((detail) => detail.level_learned_at))
+        return { name: individualMove.move.name, level: highestLevel }
       })
-      .sort((a: { level_learned_at: number }, b: { level_learned_at: number }) => b.level_learned_at - a.level_learned_at)
       .sort((a: { level: number }, b: { level: number }) => b.level - a.level)
       .slice(0, 4)
 

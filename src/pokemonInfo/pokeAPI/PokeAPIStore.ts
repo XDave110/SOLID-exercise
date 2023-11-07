@@ -9,14 +9,15 @@ export class PokeAPIStore implements PokeAPIRepo {
       id: 0,
       game_indices: [{
         game_index: 0,
-        version: {
-          name: ''
-        }
+        version: { name: '' }
       }],
       name: '',
       weight: 0,
       height: 0,
-      moves: [],
+      moves: [{
+        move: { name: '' },
+        version_group_details: [{ level_learned_at: 0 }]
+      }],
       sprites: {
         front_default: '',
         front_female: '',
@@ -25,11 +26,11 @@ export class PokeAPIStore implements PokeAPIRepo {
       },
       stats: [{
         base_stat: 0,
-        stat: {
-          name: ''
-        }
+        stat: { name: '' }
       }],
-      types: [{ type: { name: '' } }]
+      types: [{
+        type: { name: '' }
+      }]
     }
   }
 
