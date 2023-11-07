@@ -1,4 +1,5 @@
 import { PokemonData, Sprites, Move, PokemonStats } from '../dtos/PokemonData'
+import { PokeAPIRequest } from '../dtos/PokeAPIDTO'
 import { PokeAPIRepo } from './PokeAPIRepo'
 
 export class PokeAPIService {
@@ -7,14 +8,16 @@ export class PokeAPIService {
   async pokemonDataRetrieve(id: number) {
     const pokeDataResult = await this.repo.GetPokemonData(id)
 
-    const pokeData = await this.pokemonDataMapping(pokeDataResult)
-    console.log(pokeData)
+    const mappedPokeData = await this.pokemonDataMapping(pokeDataResult)
+    console.log(mappedPokeData)
+
+    return mappedPokeData
   }
 
-  async pokemonDataMapping(responseData: any): Promise<PokemonData> {
+  private async pokemonDataMapping(responseData: PokeAPIRequest): Promise<PokemonData> {
 
     const pokemonIndex = await this.pokemonIndexMapping(responseData.game_indices, this.gameVersion)
-    // const pokemonMoves: any[] = await this.pokemonMoveMapping(responseData.moves)
+    const pokemonMoves = await this.pokemonMoveMapping(responseData.moves)
     const pokemonSprites = await this.pokemonSpriteMapping(responseData.sprites)
     const pokemonStats = await this.pokemonStatMapping(responseData.stats)
     const pokemonTypes = await this.pokemonTypeMapping(responseData.types)
@@ -25,7 +28,7 @@ export class PokeAPIService {
       name: responseData.name,
       weight: responseData.weight,
       height: responseData.height,
-      moves: responseData.moves,
+      moves: pokemonMoves,
       sprites: pokemonSprites,
       stats: pokemonStats,
       types: pokemonTypes
@@ -34,7 +37,7 @@ export class PokeAPIService {
     return pokemonData
   }
 
-  async pokemonIndexMapping(responseIndexes: any, gameVersion: string): Promise<any> {
+  private async pokemonIndexMapping(responseIndexes: [{ game_index: number, version: { name: string } }], gameVersion: string): Promise<number> {
     for (const index of responseIndexes) {
       if (index.version.name === gameVersion) {
         const desirableIndex = index.game_index
@@ -43,22 +46,22 @@ export class PokeAPIService {
       }
     }
 
-    return undefined
+    return -1
   }
 
-  /*
-  async pokemonMoveMapping(responseMoves: any): Promise<any> {
-    const movesMapped = responseMoves.map((move: Move) => {
-      const moves: Move = {
-        name: responseMoves.front_default,
-        level: responseMoves.front_female
-      }
-      return moves
-    })
-    return movesMapped
+  private async pokemonMoveMapping(responseMoves: [{ move: { name: string }, version_group_details: [{ level_learned_at: number }] }]): Promise<Move[]> {
+    const topPokemonsLevelBased = responseMoves
+      .map((individualMove: { move: { name: string }, version_group_details: [{ level_learned_at: number }] }) => {
+        const highestLevel = Math.max(...individualMove.version_group_details.map((detail) => detail.level_learned_at))
+        return { name: individualMove.move.name, level: highestLevel }
+      })
+      .sort((a: { level: number }, b: { level: number }) => b.level - a.level)
+      .slice(0, 4)
+
+    return topPokemonsLevelBased
   }
-*/
-  async pokemonSpriteMapping(responseSprites: any): Promise<Sprites> {
+
+  private async pokemonSpriteMapping(responseSprites: { front_default: string, front_female: string, front_shiny: string, front_shiny_female: string }): Promise<Sprites> {
     const sprites: Sprites = {
       normal: responseSprites.front_default,
       female: responseSprites.front_female,
@@ -69,7 +72,7 @@ export class PokeAPIService {
     return sprites
   }
 
-  async pokemonStatMapping(responseStats: any): Promise<any> {
+  private async pokemonStatMapping(responseStats: [{ base_stat: number, stat: { name: string } }]): Promise<PokemonStats> {
     const pokemonStats: PokemonStats = {
       hp: { base: 0, maxEvs: 0 },
       attack: { base: 0, maxEvs: 0 },
@@ -105,11 +108,9 @@ export class PokeAPIService {
     return pokemonStats
   }
 
-  async pokemonTypeMapping(responseTypes: any): Promise<any[]> {
-    const pokemonTypes = []
-    for (const individualType of responseTypes) {
-      pokemonTypes.push(individualType.type)
-    }
+
+  private async pokemonTypeMapping(responseTypes: [{ type: { name: string } }]): Promise<string[]> {
+    const pokemonTypes: string[] = responseTypes.map((individualType) => individualType.type.name)
 
     return pokemonTypes
   }
