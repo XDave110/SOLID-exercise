@@ -1,15 +1,11 @@
-import { FamilyRepo } from "./FamilyRepo";
+import { FamilyRepo } from './FamilyRepo'
 
 export class FamilyService {
   constructor(private readonly repo: FamilyRepo) {}
 
   async pokemonFamilies(id: number) {
-    const familiesResult = await this.repo.GetPokemonFamilies(id);
+    const familiesResult = await this.repo.GetPokemonFamilies(id)
 
-    const familiesMapped = familiesResult.map((family) => {
-      return family.name;
-    });
-
-    return familiesMapped;
+    return familiesResult
   }
 }

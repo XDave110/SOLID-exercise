@@ -1,4 +1,4 @@
-export interface FamiliesDBDTO {
-  id: number;
-  name: string;
+export type FamiliesDBDTO = {
+  id: number
+  name: string
 }
