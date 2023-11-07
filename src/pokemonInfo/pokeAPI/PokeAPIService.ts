@@ -17,7 +17,7 @@ export class PokeAPIService {
   private async pokemonDataMapping(responseData: PokeAPIRequest): Promise<PokemonData> {
 
     const pokemonIndex = await this.pokemonIndexMapping(responseData.game_indices, this.gameVersion)
-    // const pokemonMoves: any[] = await this.pokemonMoveMapping(responseData.moves)
+    const pokemonMoves = await this.pokemonMoveMapping(responseData.moves)
     const pokemonSprites = await this.pokemonSpriteMapping(responseData.sprites)
     const pokemonStats = await this.pokemonStatMapping(responseData.stats)
     const pokemonTypes = await this.pokemonTypeMapping(responseData.types)
@@ -28,7 +28,7 @@ export class PokeAPIService {
       name: responseData.name,
       weight: responseData.weight,
       height: responseData.height,
-      moves: responseData.moves,
+      moves: pokemonMoves,
       sprites: pokemonSprites,
       stats: pokemonStats,
       types: pokemonTypes
@@ -49,18 +49,19 @@ export class PokeAPIService {
     return -1
   }
 
-  /*
   private async pokemonMoveMapping(responseMoves: any): Promise<any> {
-    const movesMapped = responseMoves.map((move: Move) => {
-      const moves: Move = {
-        name: responseMoves.front_default,
-        level: responseMoves.front_female
-      }
-      return moves
-    })
-    return movesMapped
+    const topPokemonsLevelBased = responseMoves
+      .map((iteratedMove: { move: { name: string }, version_group_details: any[] }) => {
+        const highestLevel = Math.max(...iteratedMove.version_group_details.map((detail) => detail.level_learned_at))
+        return { name: iteratedMove.move.name, level: highestLevel }
+      })
+      .sort((a: { level_learned_at: number }, b: { level_learned_at: number }) => b.level_learned_at - a.level_learned_at)
+      .sort((a: { level: number }, b: { level: number }) => b.level - a.level)
+      .slice(0, 4)
+
+    return topPokemonsLevelBased
   }
-*/
+
   private async pokemonSpriteMapping(responseSprites: { front_default: string, front_female: string, front_shiny: string, front_shiny_female: string }): Promise<Sprites> {
     const sprites: Sprites = {
       normal: responseSprites.front_default,
