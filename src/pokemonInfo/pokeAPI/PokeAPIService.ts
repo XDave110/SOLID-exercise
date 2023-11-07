@@ -7,9 +7,7 @@ export class PokeAPIService {
 
   async pokemonDataRetrieve(id: number) {
     const pokeDataResult = await this.repo.GetPokemonData(id)
-
     const mappedPokeData = await this.pokemonDataMapping(pokeDataResult)
-    console.log(mappedPokeData)
 
     return mappedPokeData
   }
