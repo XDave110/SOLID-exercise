@@ -8,7 +8,7 @@ export class ZoneService {
   constructor(private readonly zoneRepo: ZoneRepo, private readonly familyRepo: FamilyRepo) {}
 
   async pokemonZones(pokemonId: number) {
-    const familiesResult: FamiliesDBDTO[] = await this.familyStore.GetPokemonFamilies(pokemonId)
+    const familiesResult: FamiliesDBDTO[] = await this.familyRepo.GetPokemonFamilies(pokemonId)
     const familyZones: FamilyZoneDBDTO[] = await this.getFamilyZones(familiesResult)
     const filteredZones: FamilyZoneDBDTO[] = this.getTopThreeByProbability(familyZones)
     const zones: ZoneDBDTO[] = await this.getFilteredZones(filteredZones)
