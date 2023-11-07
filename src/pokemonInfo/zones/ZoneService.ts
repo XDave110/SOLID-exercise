@@ -1,16 +1,16 @@
 import { FamilyZoneDBDTO } from '../dtos/FamilyZoneDBDTO'
 import { ZoneDBDTO } from '../dtos/ZoneDBDTO'
-import { FamilyStore } from '../families/FamilyStore'
+import { FamilyRepo } from '../families/FamilyRepo'
 import { ZoneRepo } from './ZoneRepo'
 
 export class ZoneService {
-  constructor(private readonly zoneRepo: ZoneRepo, private readonly familyStore: FamilyStore) {}
+  constructor(private readonly zoneRepo: ZoneRepo, private readonly familyRepo: FamilyRepo) {}
 
   async pokemonZones(pokemonId: number) {
     let zones: ZoneDBDTO[] = []
     let familyZones: FamilyZoneDBDTO[] = []
 
-    const familiesResult = await this.familyStore.GetPokemonFamilies(pokemonId)
+    const familiesResult = await this.familyRepo.GetPokemonFamilies(pokemonId)
 
     for (const family of familiesResult) {
       const zonesResult = await this.zoneRepo.GetFamilyZones(family.id)
